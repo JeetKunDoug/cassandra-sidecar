@@ -27,8 +27,6 @@ import org.slf4j.LoggerFactory;
 
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
-import io.vertx.core.Vertx;
-import io.vertx.core.eventbus.EventBus;
 import org.apache.cassandra.sidecar.cluster.InstancesMetadata;
 import org.apache.cassandra.sidecar.cluster.instance.InstanceMetadata;
 import org.apache.cassandra.sidecar.common.server.utils.DurationSpec;
@@ -39,37 +37,26 @@ import org.apache.cassandra.sidecar.config.SidecarConfiguration;
 import org.apache.cassandra.sidecar.metrics.HealthMetrics;
 import org.apache.cassandra.sidecar.metrics.SidecarMetrics;
 
-import static org.apache.cassandra.sidecar.server.SidecarServerEvents.ON_SERVER_STOP;
-
 /**
  * Periodically checks the health of every instance configured in the {@link InstancesMetadata}.
  */
 public class HealthCheckPeriodicTask implements PeriodicTask
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(HealthCheckPeriodicTask.class);
-    private final EventBus eventBus;
     private final PeriodicTaskConfiguration configuration;
     private final InstancesMetadata instancesMetadata;
     private final TaskExecutorPool internalPool;
     private final HealthMetrics metrics;
 
-    public HealthCheckPeriodicTask(Vertx vertx,
-                                   SidecarConfiguration configuration,
+    public HealthCheckPeriodicTask(SidecarConfiguration configuration,
                                    InstancesMetadata instancesMetadata,
                                    ExecutorPools executorPools,
                                    SidecarMetrics metrics)
     {
-        eventBus = vertx.eventBus();
         this.configuration = configuration.healthCheckConfiguration();
         this.instancesMetadata = instancesMetadata;
         this.internalPool = executorPools.internal();
         this.metrics = metrics.server().health();
-    }
-
-    @Override
-    public void registerPeriodicTaskExecutor(PeriodicTaskExecutor executor)
-    {
-        eventBus.localConsumer(ON_SERVER_STOP.address(), message -> executor.unschedule(this));
     }
 
     @Override

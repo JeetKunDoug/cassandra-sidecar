@@ -26,7 +26,7 @@ CASSANDRA_VERSION=$(cat build.xml | grep 'property name="base.version"' | awk -F
 GIT_HASH=$(git rev-parse --short HEAD)
 DTEST_ARTIFACT_ID=${ARTIFACT_NAME}-local
 DTEST_JAR_DIR="$(dirname "${SCRIPT_DIR}/")/dtest-jars"
-
+DTEST_JAR_DIR=${CASSANDRA_DEP_DIR:-$DTEST_JAR_DIR}
 echo "${CASSANDRA_VERSION}"
 echo "${GIT_HASH}"
 echo "${DTEST_ARTIFACT_ID}"

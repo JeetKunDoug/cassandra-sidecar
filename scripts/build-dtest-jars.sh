@@ -20,7 +20,7 @@
 set -xe
 CANDIDATE_BRANCHES=(
   "cassandra-4.0:64b8d6b9add607b80752cd1a8fbce51839af9ec4"
-  "cassandra-4.1:eff82685e2c893999a009efc0e1d73f1ad390087"
+  "cassandra-4.1:044727aabafeab2f6fef74c52d349d55c8732ef5"
   "cassandra-5.0:a0d58a9ce8814d096c1bd8a0440e8e28d8ea15a9"
   # note the trunk hash cannot be advanced beyond ae0842372ff6dd1437d026f82968a3749f555ff4 (TCM), which breaks integration test
   "trunk:2a5e1b77c9f8a205dbec1afdea3f4ed1eaf6a4eb"
@@ -30,6 +30,7 @@ echo ${BRANCHES[*]}
 REPO=${REPO:-"https://github.com/apache/cassandra.git"}
 SCRIPT_DIR=$( dirname -- "$( readlink -f -- "$0"; )"; )
 DTEST_JAR_DIR="$(dirname "${SCRIPT_DIR}/")/dtest-jars"
+DTEST_JAR_DIR=${CASSANDRA_DEP_DIR:-$DTEST_JAR_DIR}
 BUILD_DIR="${DTEST_JAR_DIR}/build"
 
 if [[ "x$CLEAN" != "x" ]]; then

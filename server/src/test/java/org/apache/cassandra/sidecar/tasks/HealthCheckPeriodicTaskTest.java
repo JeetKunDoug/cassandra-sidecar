@@ -84,7 +84,7 @@ class HealthCheckPeriodicTaskTest
         InstanceMetadataFetcher mockInstanceMetadataFetcher = mock(InstanceMetadataFetcher.class);
         metrics = new SidecarMetricsImpl(mockRegistryFactory, mockInstanceMetadataFetcher);
         ExecutorPools executorPools = new ExecutorPools(vertx, new ServiceConfigurationImpl());
-        healthCheck = new HealthCheckPeriodicTask(vertx, mockConfiguration, mockInstancesMetadata,
+        healthCheck = new HealthCheckPeriodicTask(mockConfiguration, mockInstancesMetadata,
                                                   executorPools, metrics);
     }
 

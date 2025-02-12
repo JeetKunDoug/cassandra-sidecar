@@ -62,6 +62,7 @@ import org.jetbrains.annotations.VisibleForTesting;
 
 import static org.apache.cassandra.sidecar.server.SidecarServerEvents.ON_ALL_CASSANDRA_CQL_READY;
 import static org.apache.cassandra.sidecar.server.SidecarServerEvents.ON_CASSANDRA_CQL_READY;
+import static org.apache.cassandra.sidecar.server.SidecarServerEvents.ON_SERVER_STOP;
 
 /**
  * The Sidecar {@link Server} class that manages the start and stop lifecycle of the service
@@ -302,11 +303,15 @@ public class Server
      */
     protected Future<String> scheduleInternalPeriodicTasks(String deploymentId)
     {
-        periodicTaskExecutor.schedule(new HealthCheckPeriodicTask(vertx,
-                                                                  sidecarConfiguration,
-                                                                  instancesMetadata,
-                                                                  executorPools,
-                                                                  metrics));
+        HealthCheckPeriodicTask healthCheckPeriodicTask = new HealthCheckPeriodicTask(
+        sidecarConfiguration,
+                                                                   instancesMetadata,
+                                                                   executorPools,
+                                                                   metrics);
+        periodicTaskExecutor.schedule(healthCheckPeriodicTask);
+        vertx.eventBus().localConsumer(ON_SERVER_STOP.address(), message ->
+                                                                 periodicTaskExecutor.unschedule(healthCheckPeriodicTask));
+
         maybeScheduleKeyStoreCheckPeriodicTask();
 
         MessageConsumer<JsonObject> cqlReadyConsumer = vertx.eventBus().localConsumer(ON_CASSANDRA_CQL_READY.address());
