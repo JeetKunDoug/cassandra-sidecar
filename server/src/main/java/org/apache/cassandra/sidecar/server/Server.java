@@ -303,11 +303,10 @@ public class Server
      */
     protected Future<String> scheduleInternalPeriodicTasks(String deploymentId)
     {
-        HealthCheckPeriodicTask healthCheckPeriodicTask = new HealthCheckPeriodicTask(
-        sidecarConfiguration,
-                                                                   instancesMetadata,
-                                                                   executorPools,
-                                                                   metrics);
+        HealthCheckPeriodicTask healthCheckPeriodicTask = new HealthCheckPeriodicTask(sidecarConfiguration,
+                                                                                      instancesMetadata,
+                                                                                      executorPools,
+                                                                                      metrics);
         periodicTaskExecutor.schedule(healthCheckPeriodicTask);
         vertx.eventBus().localConsumer(ON_SERVER_STOP.address(), message ->
                                                                  periodicTaskExecutor.unschedule(healthCheckPeriodicTask));
